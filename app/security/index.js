@@ -1,35 +1,34 @@
 const crypto = require('crypto');
-
-const signatureFunction = crypto.createSign('RSA-SHA256');
-const verifyFunction = crypto.createVerify('RSA-SHA256');
-
+const { cryptoSettings } = require('../config');
 
 const createPair = () => {
-    const { publicKey, privateKey } = crypto.generateKeyPairSync("rsa", {
-        // The standard secure default length for RSA keys is 2048 bits
-        modulusLength: 2048,
+    const { publicKey, privateKey } = crypto.generateKeyPairSync(cryptoSettings.keyType, {
+        modulusLength: cryptoSettings.keyLength,
         publicKeyEncoding: {
-            type: 'spki',
-            format: 'pem'
+            type: cryptoSettings.publicType,
+            format: cryptoSettings.format
         },
         privateKeyEncoding: {
-            type: 'pkcs8',
-            format: 'pem'
+            type: cryptoSettings.privateType,
+            format: cryptoSettings.format
         }
     })
-
     return { publicKey, privateKey };
 }
 
 
 const sign = (payload, privateKey) => {
+    const signatureFunction = crypto.createSign(cryptoSettings.algorithm);
     signatureFunction.write(payload);
     signatureFunction.end();
+
+
     const signatureBase64 = signatureFunction.sign(privateKey, 'base64');
     return signatureBase64;
 }
 
 const isVerified = (data, signature, publicKey) => {
+    const verifyFunction = crypto.createVerify(cryptoSettings.algorithm);
     verifyFunction.write(data);
     verifyFunction.end();
 

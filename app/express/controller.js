@@ -1,105 +1,51 @@
 const { createPair, sign, isVerified } = require('../security');
 const Repository = require('./repository');
-// let temp;
 
 class Controller {
     static async signup(req, res) {
         const { body } = req;
         console.log('signup');
-        
         const { publicKey, privateKey } = createPair();
-        // temp = publicKey;
         const publicKeyStr = publicKey.toString("base64");
-
         const merge = {
             totalDistanceRun: 0,
             publicKey: publicKeyStr
         }
-
         const merged = {...merge, ...body};
-
-        const runner = await Repository.addRunner(merged);
-
+        await Repository.addRunner(merged);
         res.send(privateKey.toString("base64"));
     }
 
+    // Used to create the signature, the 'yyyyy' part of xxxx.yyyyyy,  needed to test stuff.
     static async signature(req, res) {
         const { data, privateKey } = req.body;
-
-        const a = JSON.stringify(data);
-        const b = Buffer.from(a).toString('base64')
-
-        console.log("=========================");
-        console.log(b);
-        console.log("=========================");
-
-        const signature = sign(b, privateKey);
-        // shutup = signature;
+        const encodedData = Buffer.from(JSON.stringify(data)).toString('base64');
+        console.log('=========================');
+        console.log(encodedData);
+        console.log('=========================');
+        const signature = sign(encodedData, privateKey);
         res.send(signature);
     }
 
     static async update(req, res) {
-        const { request } = req.body;
-
-        const splited = request.split('.');
-        const data = splited[0];
-        const signature = splited[1];
-
-        // const check = isVerified(data, signature, pubKey);
-        const bufferObj = Buffer.from(data, "base64");
-        const decodedString = bufferObj.toString("utf8");
-        const decodedData = JSON.parse(decodedString);
-
-        const runner = await Repository.getRunner(decodedData.id);
-
-        const pubKey = runner.publicKey;
-
-        const check = isVerified(data, signature, pubKey);
-        
+        const { decodedData, runner } = res.locals
         const totalDistanceRun = runner.totalDistanceRun + decodedData.distance;
         const updateObj = {
             totalDistanceRun
         }
-        
-        
-
         const updated = await Repository.updateRunner(runner.id, updateObj);
-
-        res.send(check);
+        res.send({totalDistanceRun: updated.totalDistanceRun});
     }
 
-    static async mystats(req, res) {
-        const { request } = req.body;
-
-        const splited = request.split('.');
-        const data = splited[0];
-        const signature = splited[1];
-
-        // const check = isVerified(data, signature, pubKey);
-
-        const bufferObj = Buffer.from(data, "base64");
-        const decodedString = bufferObj.toString("utf8");
-        const decodedData = JSON.parse(decodedString);
-
-        const runner = await Repository.getRunner(decodedData.id);
-
-        const pubKey = runner.publicKey;
-
-        // const totalDistanceRun = runner.totalDistanceRun + decodedData.distance;
-        // const updateObj = {
-        //     totalDistanceRun
-        // }
-
-        
-        const check = isVerified(data, signature, pubKey);
-        
+    static async myStats(req, res) {
+        const { decodedData, runner } = res.locals
         const { type } = decodedData;
-
-        const updated = await Repository.updateRunner(runner.id, updateObj);
-
-        res.send(check);
+        const searchTerm = type === 'overall' ? {} : {[type]: runner[type]};
+        const bestRunners = await Repository.getBestRunners(searchTerm);
+        const targetRunnerRank = bestRunners.findIndex((human) => human.id === runner.id);
+        const rank = targetRunnerRank === -1 ? -1 : targetRunnerRank + 1;
+        res.json({ranking: rank});
     }
-
 }
 
 module.exports = Controller

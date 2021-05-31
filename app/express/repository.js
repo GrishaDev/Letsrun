@@ -4,7 +4,7 @@ const runnerSchema = require('../mongo/schema');
 class Repository {
 
     static async getRunner(id) {
-        return await schema.findById(id);;
+        return await runnerSchema.findById(id);;
     }
 
     static async addRunner(data) {
@@ -13,7 +13,11 @@ class Repository {
     }
 
     static async updateRunner(id, data) {
-        return await schema.findByIdAndUpdate(id, data, {new: true});
+        return await runnerSchema.findByIdAndUpdate(id, data, {new: true});
+    }
+
+    static async getBestRunners(data) {
+        return await runnerSchema.find(data).sort('-totalDistanceRun');
     }
 }
 

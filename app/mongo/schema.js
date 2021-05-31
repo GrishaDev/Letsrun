@@ -17,6 +17,10 @@ const schema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    city: {
+        type: String,
+        required: true
+    },
     totalDistanceRun: {
         type: Number,
         required: true,
