@@ -16,15 +16,15 @@ class Controller {
         res.send(privateKey.toString("base64"));
     }
 
-    // Used to create the signature, the 'yyyyy' part of xxxx.yyyyyy,  needed to test stuff.
-    static async signature(req, res) {
+    // Used to create the signature, the 'yyyyy' part of xxxx.yyyyyy, and returns entire token. needed to test stuff.
+    static async getToken(req, res) {
         const { data, privateKey } = req.body;
         const encodedData = Buffer.from(JSON.stringify(data)).toString('base64');
         console.log('=========================');
         console.log(encodedData);
         console.log('=========================');
         const signature = sign(encodedData, privateKey);
-        res.send(signature);
+        res.send(`${encodedData}.${signature}`);
     }
 
     static async update(req, res) {

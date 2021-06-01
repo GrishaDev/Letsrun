@@ -13,13 +13,16 @@ const isAllowed = async (req, res, next) => {
     const decodedString = bufferObj.toString("utf8");
     const decodedData = JSON.parse(decodedString);
 
-    const runner = await Repository.getRunner(decodedData.id);
-    const pubKey = runner.publicKey;
-    const check = isVerified(data, signature, pubKey);
+    const allRunners = await Repository.getAllRunners();
+    const verifiedRunner = allRunners.find(runner => isVerified(data, signature, runner.publicKey))
 
-    if(!check) throw new HttpError(403, 'Access denied');
+    // // const runner = await Repository.getRunner(decodedData.id);
+    // const pubKey = runner.publicKey;
+    // const check = isVerified(data, signature, pubKey);
 
-    res.locals.runner = runner;
+    if(!verifiedRunner) throw new HttpError(403, 'Access denied');
+
+    res.locals.runner = verifiedRunner;
     res.locals.decodedData = decodedData;
     return next();
 }

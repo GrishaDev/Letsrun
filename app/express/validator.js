@@ -14,10 +14,9 @@ const requestSchema = Joi.object({
 
 const signSchema = Joi.object({
     data: Joi.object({
-        id: Joi.string().required(),
         type: Joi.string().valid(...config.validTypes),
         distance: Joi.number(),
-    }).or('type', 'distance'),
+    }).or('type', 'distance').options({ allowUnknown: true }),
     privateKey: Joi.string().required(),
 });
 
@@ -28,7 +27,7 @@ const isValidSignUp = (req, res, next) => {
     if(error) {
         sendError(error);
     }
-    next(); 
+    return next(); 
 }
 
 const isValidRequest = (req, res, next) => {
@@ -36,7 +35,7 @@ const isValidRequest = (req, res, next) => {
     if(error) {
         sendError(error);
     }
-    next(); 
+    return next(); 
 }
 
 const isValidSign = (req, res, next) => {
@@ -44,7 +43,7 @@ const isValidSign = (req, res, next) => {
     if(error) {
         sendError(error);
     }
-    next(); 
+    return next(); 
 }
 
 const sendError = (err) => {

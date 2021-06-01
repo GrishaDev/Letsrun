@@ -7,6 +7,10 @@ class Repository {
         return await runnerSchema.findById(id);;
     }
 
+    static async getAllRunners() {
+        return await runnerSchema.find({});;
+    }
+
     static async addRunner(data) {
         const runner = new runnerSchema(data);
         return await runner.save();
