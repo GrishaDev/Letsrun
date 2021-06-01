@@ -1,4 +1,4 @@
-const { createPair, sign, isVerified } = require('../security');
+const { createPair, sign } = require('../security');
 const Repository = require('./repository');
 
 class Controller {

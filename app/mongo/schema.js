@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const config = require('../config');
 const shortid = require('shortid');
 
-
 const schema = new mongoose.Schema({
     _id: {
         type: String,

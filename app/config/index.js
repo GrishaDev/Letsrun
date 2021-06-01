@@ -7,7 +7,6 @@ module.exports = {
     webPort: env.get('PORT').required().asIntPositive(),
     dbOptions: { useUnifiedTopology: true , useNewUrlParser: true },
     dbUrl: env.get('DB_URL').required().asUrlString(),
-    dbUrlTest: env.get('DB_URL_TEST').required().asUrlString(),
     validTypes: ['overall', 'city', 'age'],
     cryptoSettings : {
         keyType: 'rsa',

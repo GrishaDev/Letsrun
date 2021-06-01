@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const config = require('../config');
 
 module.exports = async () => {
-    const connectionUrl = config.env === 'test' ? config.dbUrlTest : config.dbUrl;
+    const connectionUrl =  config.dbUrl;
     const dbOptions = config.dbOptions;
 
     await mongoose.connect(connectionUrl, dbOptions).catch(err => {

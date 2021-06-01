@@ -22,7 +22,6 @@ const sign = (payload, privateKey) => {
     signatureFunction.write(payload);
     signatureFunction.end();
 
-
     const signatureBase64 = signatureFunction.sign(privateKey, 'base64');
     return signatureBase64;
 }
@@ -37,4 +36,3 @@ const isVerified = (data, signature, publicKey) => {
 }
 
 module.exports = { createPair, sign, isVerified };
-

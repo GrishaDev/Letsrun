@@ -2,7 +2,6 @@
 const runnerSchema = require('../mongo/schema');
 
 class Repository {
-
     static async getRunner(id) {
         return await runnerSchema.findById(id);;
     }

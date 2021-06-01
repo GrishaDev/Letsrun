@@ -20,8 +20,6 @@ const signSchema = Joi.object({
     privateKey: Joi.string().required(),
 });
 
-
-
 const isValidSignUp = (req, res, next) => {
     const { error } = signUpSchema.validate(req.body);
     if(error) {

@@ -16,10 +16,6 @@ const isAllowed = async (req, res, next) => {
     const allRunners = await Repository.getAllRunners();
     const verifiedRunner = allRunners.find(runner => isVerified(data, signature, runner.publicKey))
 
-    // // const runner = await Repository.getRunner(decodedData.id);
-    // const pubKey = runner.publicKey;
-    // const check = isVerified(data, signature, pubKey);
-
     if(!verifiedRunner) throw new HttpError(403, 'Access denied');
 
     res.locals.runner = verifiedRunner;
